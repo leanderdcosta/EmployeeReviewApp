@@ -1,0 +1,347 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="Models.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Designation">
+          <Key>
+            <PropertyRef Name="DesignationID" />
+          </Key>
+          <Property Name="DesignationID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Designation" Type="nvarchar" MaxLength="30" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EmployeeRatings">
+          <Key>
+            <PropertyRef Name="EmployeeRatingsID" />
+          </Key>
+          <Property Name="EmployeeRatingsID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EmployeeID" Type="int" Nullable="false" />
+          <Property Name="SkillsID" Type="int" />
+          <Property Name="RatingsID" Type="int" />
+          <Property Name="Comments" Type="varchar" MaxLength="2000" />
+          <Property Name="CreateDate" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Employees">
+          <Key>
+            <PropertyRef Name="EmployeeID" />
+          </Key>
+          <Property Name="EmployeeID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EmployeeName" Type="nvarchar" MaxLength="30" Nullable="false" />
+          <Property Name="DesignationID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Ratings">
+          <Key>
+            <PropertyRef Name="RatingsID" />
+          </Key>
+          <Property Name="RatingsID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="RatingsName" Type="nvarchar" MaxLength="30" Nullable="false" />
+          <Property Name="SkillTypeID" Type="int" />
+        </EntityType>
+        <EntityType Name="Skills">
+          <Key>
+            <PropertyRef Name="SkillsID" />
+          </Key>
+          <Property Name="SkillsID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SkillsName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="SkillTypeID" Type="int" />
+        </EntityType>
+        <EntityType Name="SkillType">
+          <Key>
+            <PropertyRef Name="SkillTypeID" />
+          </Key>
+          <Property Name="SkillTypeID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SkillTypeName" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_EmployeeRatings_Employees">
+          <End Role="Employees" Type="Self.Employees" Multiplicity="1" />
+          <End Role="EmployeeRatings" Type="Self.EmployeeRatings" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employees">
+              <PropertyRef Name="EmployeeID" />
+            </Principal>
+            <Dependent Role="EmployeeRatings">
+              <PropertyRef Name="EmployeeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EmployeeRatings_Ratings">
+          <End Role="Ratings" Type="Self.Ratings" Multiplicity="0..1" />
+          <End Role="EmployeeRatings" Type="Self.EmployeeRatings" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Ratings">
+              <PropertyRef Name="RatingsID" />
+            </Principal>
+            <Dependent Role="EmployeeRatings">
+              <PropertyRef Name="RatingsID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EmployeeRatings_Skills">
+          <End Role="Skills" Type="Self.Skills" Multiplicity="0..1" />
+          <End Role="EmployeeRatings" Type="Self.EmployeeRatings" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Skills">
+              <PropertyRef Name="SkillsID" />
+            </Principal>
+            <Dependent Role="EmployeeRatings">
+              <PropertyRef Name="SkillsID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Employees_DesignationID">
+          <End Role="Designation" Type="Self.Designation" Multiplicity="1" />
+          <End Role="Employees" Type="Self.Employees" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Designation">
+              <PropertyRef Name="DesignationID" />
+            </Principal>
+            <Dependent Role="Employees">
+              <PropertyRef Name="DesignationID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="ModelsStoreContainer">
+          <EntitySet Name="Designation" EntityType="Self.Designation" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EmployeeRatings" EntityType="Self.EmployeeRatings" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Employees" EntityType="Self.Employees" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Ratings" EntityType="Self.Ratings" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Skills" EntityType="Self.Skills" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SkillType" EntityType="Self.SkillType" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_EmployeeRatings_Employees" Association="Self.FK_EmployeeRatings_Employees">
+            <End Role="Employees" EntitySet="Employees" />
+            <End Role="EmployeeRatings" EntitySet="EmployeeRatings" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EmployeeRatings_Ratings" Association="Self.FK_EmployeeRatings_Ratings">
+            <End Role="Ratings" EntitySet="Ratings" />
+            <End Role="EmployeeRatings" EntitySet="EmployeeRatings" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EmployeeRatings_Skills" Association="Self.FK_EmployeeRatings_Skills">
+            <End Role="Skills" EntitySet="Skills" />
+            <End Role="EmployeeRatings" EntitySet="EmployeeRatings" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Employees_DesignationID" Association="Self.FK_Employees_DesignationID">
+            <End Role="Designation" EntitySet="Designation" />
+            <End Role="Employees" EntitySet="Employees" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="Models" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Designation">
+          <Key>
+            <PropertyRef Name="DesignationID" />
+          </Key>
+          <Property Name="DesignationID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DesignationName" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Employees" Relationship="Self.FK_Employees_DesignationID" FromRole="Designation" ToRole="Employees" />
+        </EntityType>
+        <EntityType Name="EmployeeRating">
+          <Key>
+            <PropertyRef Name="EmployeeRatingsID" />
+          </Key>
+          <Property Name="EmployeeRatingsID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EmployeeID" Type="Int32" Nullable="false" />
+          <Property Name="SkillsID" Type="Int32" />
+          <Property Name="RatingsID" Type="Int32" />
+          <Property Name="Comments" Type="String" MaxLength="2000" FixedLength="false" Unicode="false" />
+          <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Employee" Relationship="Self.FK_EmployeeRatings_Employees" FromRole="EmployeeRatings" ToRole="Employees" />
+          <NavigationProperty Name="Rating" Relationship="Self.FK_EmployeeRatings_Ratings" FromRole="EmployeeRatings" ToRole="Ratings" />
+          <NavigationProperty Name="Skill" Relationship="Self.FK_EmployeeRatings_Skills" FromRole="EmployeeRatings" ToRole="Skills" />
+        </EntityType>
+        <EntityType Name="Employee">
+          <Key>
+            <PropertyRef Name="EmployeeID" />
+          </Key>
+          <Property Name="EmployeeID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EmployeeName" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DesignationID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Designation" Relationship="Self.FK_Employees_DesignationID" FromRole="Employees" ToRole="Designation" />
+          <NavigationProperty Name="EmployeeRatings" Relationship="Self.FK_EmployeeRatings_Employees" FromRole="Employees" ToRole="EmployeeRatings" />
+        </EntityType>
+        <EntityType Name="Rating">
+          <Key>
+            <PropertyRef Name="RatingsID" />
+          </Key>
+          <Property Name="RatingsID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="RatingsName" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="SkillTypeID" Type="Int32" />
+          <NavigationProperty Name="EmployeeRatings" Relationship="Self.FK_EmployeeRatings_Ratings" FromRole="Ratings" ToRole="EmployeeRatings" />
+        </EntityType>
+        <EntityType Name="Skill">
+          <Key>
+            <PropertyRef Name="SkillsID" />
+          </Key>
+          <Property Name="SkillsID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SkillsName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="SkillTypeID" Type="Int32" />
+          <NavigationProperty Name="EmployeeRatings" Relationship="Self.FK_EmployeeRatings_Skills" FromRole="Skills" ToRole="EmployeeRatings" />
+        </EntityType>
+        <EntityType Name="SkillType">
+          <Key>
+            <PropertyRef Name="SkillTypeID" />
+          </Key>
+          <Property Name="SkillTypeID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SkillTypeName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Employees_DesignationID">
+          <End Role="Designation" Type="Self.Designation" Multiplicity="1" />
+          <End Role="Employees" Type="Self.Employee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Designation">
+              <PropertyRef Name="DesignationID" />
+            </Principal>
+            <Dependent Role="Employees">
+              <PropertyRef Name="DesignationID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EmployeeRatings_Employees">
+          <End Role="Employees" Type="Self.Employee" Multiplicity="1" />
+          <End Role="EmployeeRatings" Type="Self.EmployeeRating" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employees">
+              <PropertyRef Name="EmployeeID" />
+            </Principal>
+            <Dependent Role="EmployeeRatings">
+              <PropertyRef Name="EmployeeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EmployeeRatings_Ratings">
+          <End Role="Ratings" Type="Self.Rating" Multiplicity="0..1" />
+          <End Role="EmployeeRatings" Type="Self.EmployeeRating" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Ratings">
+              <PropertyRef Name="RatingsID" />
+            </Principal>
+            <Dependent Role="EmployeeRatings">
+              <PropertyRef Name="RatingsID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EmployeeRatings_Skills">
+          <End Role="Skills" Type="Self.Skill" Multiplicity="0..1" />
+          <End Role="EmployeeRatings" Type="Self.EmployeeRating" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Skills">
+              <PropertyRef Name="SkillsID" />
+            </Principal>
+            <Dependent Role="EmployeeRatings">
+              <PropertyRef Name="SkillsID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="EmployeeContext" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Designations" EntityType="Self.Designation" />
+          <EntitySet Name="EmployeeRatings" EntityType="Self.EmployeeRating" />
+          <EntitySet Name="Employees" EntityType="Self.Employee" />
+          <EntitySet Name="Ratings" EntityType="Self.Rating" />
+          <EntitySet Name="Skills" EntityType="Self.Skill" />
+          <EntitySet Name="SkillTypes" EntityType="Self.SkillType" />
+          <AssociationSet Name="FK_Employees_DesignationID" Association="Self.FK_Employees_DesignationID">
+            <End Role="Designation" EntitySet="Designations" />
+            <End Role="Employees" EntitySet="Employees" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EmployeeRatings_Employees" Association="Self.FK_EmployeeRatings_Employees">
+            <End Role="Employees" EntitySet="Employees" />
+            <End Role="EmployeeRatings" EntitySet="EmployeeRatings" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EmployeeRatings_Ratings" Association="Self.FK_EmployeeRatings_Ratings">
+            <End Role="Ratings" EntitySet="Ratings" />
+            <End Role="EmployeeRatings" EntitySet="EmployeeRatings" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EmployeeRatings_Skills" Association="Self.FK_EmployeeRatings_Skills">
+            <End Role="Skills" EntitySet="Skills" />
+            <End Role="EmployeeRatings" EntitySet="EmployeeRatings" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="ModelsStoreContainer" CdmEntityContainer="EmployeeContext">
+          <EntitySetMapping Name="Designations">
+            <EntityTypeMapping TypeName="Models.Designation">
+              <MappingFragment StoreEntitySet="Designation">
+                <ScalarProperty Name="DesignationID" ColumnName="DesignationID" />
+                <ScalarProperty Name="DesignationName" ColumnName="Designation" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EmployeeRatings">
+            <EntityTypeMapping TypeName="Models.EmployeeRating">
+              <MappingFragment StoreEntitySet="EmployeeRatings">
+                <ScalarProperty Name="EmployeeRatingsID" ColumnName="EmployeeRatingsID" />
+                <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
+                <ScalarProperty Name="SkillsID" ColumnName="SkillsID" />
+                <ScalarProperty Name="RatingsID" ColumnName="RatingsID" />
+                <ScalarProperty Name="Comments" ColumnName="Comments" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Employees">
+            <EntityTypeMapping TypeName="Models.Employee">
+              <MappingFragment StoreEntitySet="Employees">
+                <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
+                <ScalarProperty Name="EmployeeName" ColumnName="EmployeeName" />
+                <ScalarProperty Name="DesignationID" ColumnName="DesignationID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Ratings">
+            <EntityTypeMapping TypeName="Models.Rating">
+              <MappingFragment StoreEntitySet="Ratings">
+                <ScalarProperty Name="RatingsID" ColumnName="RatingsID" />
+                <ScalarProperty Name="RatingsName" ColumnName="RatingsName" />
+                <ScalarProperty Name="SkillTypeID" ColumnName="SkillTypeID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Skills">
+            <EntityTypeMapping TypeName="Models.Skill">
+              <MappingFragment StoreEntitySet="Skills">
+                <ScalarProperty Name="SkillsID" ColumnName="SkillsID" />
+                <ScalarProperty Name="SkillsName" ColumnName="SkillsName" />
+                <ScalarProperty Name="SkillTypeID" ColumnName="SkillTypeID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SkillTypes">
+            <EntityTypeMapping TypeName="Models.SkillType">
+              <MappingFragment StoreEntitySet="SkillType">
+                <ScalarProperty Name="SkillTypeID" ColumnName="SkillTypeID" />
+                <ScalarProperty Name="SkillTypeName" ColumnName="SkillTypeName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

@@ -1,0 +1,35 @@
+﻿@model EmployeeReviewApp.Models.EmployeeReviewModel
+@{
+    ViewBag.Title = "Add Review";
+}
+
+<br />
+@using (Html.BeginForm("ReviewForm", "Home", FormMethod.Post, null))
+{
+    <fieldset>
+        <legend>
+            <b>@Model.SkillTypeName Skills</b>
+        </legend>
+        <span>@Model.SkillName</span>
+
+        @foreach (var item in Model.Ratings)
+        {
+            <div class="radio" style="margin-left:15px;">
+                @Html.RadioButtonFor(m => m.SelectedRating, item.RatingsID)@item.RatingsName
+            </div>
+        }
+        @Html.ValidationMessageFor(m => m.SelectedRating, "", new { @class = "text-danger" })
+        <br />
+
+        <div class="form-group">
+            <label for="comment">Comment:</label>
+            @Html.TextAreaFor(model => model.Comments, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Comments, "", new { @class = "text-danger" })
+        </div>
+    </fieldset>
+    <input type="submit" class="btn btn-primary" value="Next" />
+    @Html.HiddenFor(x => x.EmployeeRatingsID)
+    @Html.HiddenFor(x => x.EmployeeID)
+    @Html.HiddenFor(x => x.typeID)
+    @Html.HiddenFor(x => x.AddFlag)
+}
