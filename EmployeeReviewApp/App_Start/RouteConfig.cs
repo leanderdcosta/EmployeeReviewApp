@@ -16,7 +16,7 @@ namespace EmployeeReviewApp
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+                defaults: new { controller = "EmployeeReview", action = "Index", id = UrlParameter.Optional }
             );
         }
     }

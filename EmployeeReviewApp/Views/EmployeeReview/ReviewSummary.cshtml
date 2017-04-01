@@ -1,0 +1,72 @@
+﻿@model EmployeeReviewApp.Models.EmployeeViewModel
+@{
+    ViewBag.Title = "Review Summary";
+}
+
+<h3>Employee Review Summary</h3>
+<table id="tblReview" style="margin-top:18px">
+    @foreach (var item in Model.skillType)
+    {
+        <tr><td><u><b>@item.SkillTypeName</b><b>&nbsp;Skills</b></u></td></tr>
+        foreach (var item1 in Model.skillRating)
+        {
+            if (item.SkillTypeID == item1.SkillTypeID)
+            {
+                <tr>
+                    <td style="padding:0 32px 0 10px;">@item1.Skill</td>
+                    <td style="padding:0 32px 0 10px;">
+                        @if (item.SkillTypeID == 1)
+                        {
+                            <span id="rating@(item1.SkillID)" class="rating" title="@(item1.Rating)" data-toggle="popover"  data-content="@(item1.Comments)">
+                                @(item1.Rating == "Outstanding" ? @Html.CheckBox(item1.Skill, new { @checked = "checked", @class = "rating-input" }) : @Html.CheckBox(item1.Skill, new { @class = "rating-input" }))
+                                <label class="rating-star"></label>
+
+                                @(item1.Rating == "Above Expectations" ? @Html.CheckBox(item1.Skill, new { @checked = "checked", @class = "rating-input" }) : @Html.CheckBox(item1.Skill, new { @class = "rating-input" }))
+                                <label class="rating-star"></label>
+
+                                @(item1.Rating == "Meets Expectations" ? @Html.CheckBox(item1.Skill, new { @checked = "checked", @class = "rating-input" }) : @Html.CheckBox(item1.Skill, new { @class = "rating-input" }))
+                                <label class="rating-star"></label>
+
+                                @(item1.Rating == "Needs Improvement" ? @Html.CheckBox(item1.Skill, new { @checked = "checked", @class = "rating-input" }) : @Html.CheckBox(item1.Skill, new { @class = "rating-input" }))
+                                <label class="rating-star"></label>
+
+                                @(item1.Rating == "Unsactisfactory" ? @Html.CheckBox(item1.Skill, new { @checked = "checked", @class = "rating-input" }) : @Html.CheckBox(item1.Skill, new { @class = "rating-input" }))
+                                <label class="rating-star"></label>
+                            </span>
+                        }
+                        else
+                        {
+                            <span id="rating@(item1.SkillID)" class="rating" title="@(item1.Rating)" data-toggle="popover" data-content="@(item1.Comments)">
+                                @(item1.Rating == "Expert" ? @Html.CheckBox(item1.Skill, new { @checked = "checked", @class = "rating-input" }) : @Html.CheckBox(item1.Skill, new { @class = "rating-input" }))
+                                <label class="rating-star"></label>
+
+                                @(item1.Rating == "Proficient" ? @Html.CheckBox(item1.Skill, new { @checked = "checked", @class = "rating-input" }) : @Html.CheckBox(item1.Skill, new { @class = "rating-input" }))
+                                <label class="rating-star"></label>
+
+                                @(item1.Rating == "Intermediate" ? @Html.CheckBox(item1.Skill, new { @checked = "checked", @class = "rating-input" }) : @Html.CheckBox(item1.Skill, new { @class = "rating-input" }))
+                                <label class="rating-star"></label>
+
+                                @(item1.Rating == "Beginner" ? @Html.CheckBox(item1.Skill, new { @checked = "checked", @class = "rating-input" }) : @Html.CheckBox(item1.Skill, new { @class = "rating-input" }))
+                                <label class="rating-star"></label>
+                            </span>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        <tr><td>&nbsp;</td></tr>
+    }
+</table>
+
+@{
+    <button class="btn btn-primary" onclick="location.href='@Url.Action("Home", "EmployeeReview")'">Back</button>
+}
+@Scripts.Render("~/Scripts/jquery-1.10.2.min.js")
+<script type='text/javascript'>
+    $(document).on('ready', function () {
+        $('[data-toggle="popover"]').popover({
+            placement : 'top',
+            trigger : 'hover'
+        });
+    });
+</script>

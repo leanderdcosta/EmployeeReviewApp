@@ -5,6 +5,10 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeReviewApp", "EmployeeReviewApp\EmployeeReviewApp.csproj", "{9C801173-A8F8-47DC-AAE1-648EF57C99B7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeReview.Core", "EmployeeReview.Core\EmployeeReview.Core.csproj", "{8EA81280-C888-4795-93F9-C008E48474D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeReviewAPI", "EmployeeReviewAPI\EmployeeReviewAPI.csproj", "{5015E6D9-67FD-426D-92E1-96547B85E4AA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{9C801173-A8F8-47DC-AAE1-648EF57C99B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C801173-A8F8-47DC-AAE1-648EF57C99B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C801173-A8F8-47DC-AAE1-648EF57C99B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8EA81280-C888-4795-93F9-C008E48474D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EA81280-C888-4795-93F9-C008E48474D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EA81280-C888-4795-93F9-C008E48474D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EA81280-C888-4795-93F9-C008E48474D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5015E6D9-67FD-426D-92E1-96547B85E4AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5015E6D9-67FD-426D-92E1-96547B85E4AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5015E6D9-67FD-426D-92E1-96547B85E4AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5015E6D9-67FD-426D-92E1-96547B85E4AA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
