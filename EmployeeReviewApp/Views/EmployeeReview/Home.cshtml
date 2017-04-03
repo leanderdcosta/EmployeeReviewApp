@@ -1,19 +1,23 @@
-﻿@*@model EmployeeReviewApp.Models.EmployeeReviewModel*@
+﻿@model EmployeeReviewApp.Models.SkillsTypeModels
 @{
     ViewBag.Title = "Home Page";
 }
 
 <div class="row-fluid">
     <center>
-        <div id="div1" style="margin-top:30px"><button class="btn btn-primary" onclick="location.href='@Url.Action("ReviewForm", "EmployeeReview", new { typeID = 1 })'">Developer Skills</button></div>
-        <div id="div2" style="margin-top:30px"><button class="btn btn-primary" onclick="location.href='@Url.Action("ReviewForm", "EmployeeReview", new { typeID = 2 })'">Technical Skills</button></div>
-        <div id="div3" style="margin-top:30px"><button class="btn btn-primary" onclick="location.href='@Url.Action("ReviewSummary", "EmployeeReview")'">Summary</button></div>
+        <div id="div1" style="margin-top:30px">
+            @foreach (var item in Model.SkillType)
+            {
+                <div style="margin-top:30px"><button class="btn btn-primary" onclick="location.href='@Url.Action("ReviewForm", "EmployeeReview", new { typeID = item.SkillTypeID })'">@item.SkillTypeName</button></div>
+            }
+        </div>
+        <div id="div2" style="margin-top:30px"><button class="btn btn-primary" onclick="location.href='@Url.Action("ReviewSummary", "EmployeeReview")'">Summary</button></div>
     </center>
 </div>
 @Scripts.Render("~/Scripts/jquery-1.10.2.min.js")
 <script type='text/javascript'>
     $(document).ready(function () {
-        $("#div3").hide();
+        $("#div2").hide();
         var employeeID = '@Session["EmployeeID"]';
         $.ajax({
             url: 'http://localhost:50889/api/EmployeeReview/GetReviewFormCompleteStatus',
@@ -25,8 +29,7 @@
                 console.log("Success->" + response.success);
                 if (response.success == 1) {
                     $("#div1").hide();
-                    $("#div2").hide();
-                    $("#div3").show();
+                    $("#div2").show();
                 }
             },
             failure: function (response) {

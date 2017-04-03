@@ -173,6 +173,7 @@
     <Compile Include="Models\EmployeeModel.cs" />
     <Compile Include="Models\EmployeeReviewModel.cs" />
     <Compile Include="Models\EmployeeViewModel.cs" />
+    <Compile Include="Models\SkillsTypeModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

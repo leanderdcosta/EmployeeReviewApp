@@ -55,7 +55,11 @@ namespace EmployeeReviewApp.Controllers
         public ActionResult Home()
         {
             System.Web.HttpContext.Current.Session["PageCounter"] = 1;
-            return View();
+
+            SkillsTypeModels model = new SkillsTypeModels();
+            model.SkillType = db.SkillTypes.ToList();
+
+            return View(model);
         }
 
         [HttpGet]
