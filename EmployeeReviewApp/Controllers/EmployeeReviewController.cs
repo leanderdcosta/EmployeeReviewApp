@@ -117,7 +117,7 @@ namespace EmployeeReviewApp.Controllers
                     employeeRating.CreateDate = DateTime.Now;
 
                     HttpClient client = InitialiseHttpClient();
-                    HttpResponseMessage response = client.PostAsJsonAsync("api/EmployeeReview/AddEmployeeRating", employeeRating).Result;
+                    HttpResponseMessage response = client.PostAsJsonAsync("EmployeeReview/AddEmployeeRating", employeeRating).Result;
                     if (response.IsSuccessStatusCode)
                         ++pageCounter;
                 }
@@ -139,7 +139,7 @@ namespace EmployeeReviewApp.Controllers
                     //employeeRating.Comments = model.Comments;
 
                     //HttpClient client = InitialiseHttpClient();
-                    //HttpResponseMessage response = client.PutAsJsonAsync("api/EmployeeReview/UpdateEmployeeRating", employeeRating).Result;
+                    //HttpResponseMessage response = client.PutAsJsonAsync("EmployeeReview/UpdateEmployeeRating", employeeRating).Result;
                     //if (response.IsSuccessStatusCode)
                     //    ++pageCounter;
 
@@ -162,7 +162,7 @@ namespace EmployeeReviewApp.Controllers
             HttpClient client = InitialiseHttpClient();
 
             EmployeeReviewModel employeeReviewModel = null;
-            HttpResponseMessage response = client.GetAsync("api/EmployeeReview/GetEmployeeReviewFormData?typeID=" + typeID + "&pageCounter=" + pageCounter + " &employeeID=" + employeeID).Result;
+            HttpResponseMessage response = client.GetAsync("EmployeeReview/GetEmployeeReviewFormData?typeID=" + typeID + "&pageCounter=" + pageCounter + " &employeeID=" + employeeID).Result;
             if (response.IsSuccessStatusCode)
             {
                 var JSONResponse = response.Content.ReadAsStringAsync();
@@ -177,7 +177,7 @@ namespace EmployeeReviewApp.Controllers
             HttpClient client = InitialiseHttpClient();
 
             EmployeeViewModel employeeViewModel = null;
-            HttpResponseMessage response = client.GetAsync("api/EmployeeReview/GetEmployeeReviewSummary?employeeID=" + employeeID).Result;
+            HttpResponseMessage response = client.GetAsync("EmployeeReview/GetEmployeeReviewSummary?employeeID=" + employeeID).Result;
             if (response.IsSuccessStatusCode)
             {
                 var JSONResponse = response.Content.ReadAsStringAsync();
@@ -196,10 +196,13 @@ namespace EmployeeReviewApp.Controllers
 
         public HttpClient InitialiseHttpClient()
         {
+
+            string webAPIURI = System.Configuration.ConfigurationManager.AppSettings["WebAPI"];
+
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            client.BaseAddress = new Uri("http://localhost:50889/");
+            client.BaseAddress = new Uri(webAPIURI);
             return client;
         }
     }
