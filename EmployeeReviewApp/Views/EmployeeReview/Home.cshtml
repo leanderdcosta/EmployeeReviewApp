@@ -8,7 +8,7 @@
         <div id="div1" style="margin-top:30px">
             @foreach (var item in Model.SkillType)
             {
-                <div style="margin-top:30px"><button class="btn btn-primary" onclick="location.href='@Url.Action("ReviewForm", "EmployeeReview", new { typeID = item.SkillTypeID })'">@item.SkillTypeName</button></div>
+                <div style="margin-top:30px"><button class="btn btn-primary" onclick="location.href='@Url.Action("ReviewForm", "EmployeeReview", new { typeID = item.Id })'">@item.SkillTypeName</button></div>
             }
         </div>
         <div id="div2" style="margin-top:30px"><button class="btn btn-primary" onclick="location.href='@Url.Action("ReviewSummary", "EmployeeReview")'">Summary</button></div>

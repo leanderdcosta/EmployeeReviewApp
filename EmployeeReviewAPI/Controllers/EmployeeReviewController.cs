@@ -9,9 +9,6 @@ using Newtonsoft.Json.Linq;
 using EmployeeReviewAPI.Models;
 using static EmployeeReviewAPI.Models.EmployeeViewModel;
 using Newtonsoft.Json;
-using System.Web.Http.Description;
-using System.Data.Entity.Infrastructure;
-using System.Data.Entity;
 using EmployeeReviewApp.Models;
 
 namespace EmployeeReviewAPI.Controllers
@@ -27,8 +24,8 @@ namespace EmployeeReviewAPI.Controllers
                         where !(
                                 from o in db.EmployeeRatings
                                 where o.EmployeeID == employeeID
-                                select o.SkillsID)
-                                .Contains(c.SkillsID)
+                                select o.SkillID)
+                                .Contains(c.Id)
                         select c;
 
             int success = query.Count() == 0 ? 1 : -1;
@@ -42,11 +39,19 @@ namespace EmployeeReviewAPI.Controllers
         {
             var list = from er in db.EmployeeRatings
                        where er.EmployeeID == employeeID
-                       join e in db.Employees on er.EmployeeID equals e.EmployeeID
-                       join r in db.Ratings on er.RatingsID equals r.RatingsID
-                       join s in db.Skills on er.SkillsID equals s.SkillsID
-                       join st in db.SkillTypes on s.SkillTypeID equals st.SkillTypeID
-                       select new { st.SkillTypeID, st.SkillTypeName, s.SkillsID, s.SkillsName, r.RatingsName, er.Comments };
+                       join e in db.Employees on er.EmployeeID equals e.Id
+                       join r in db.Ratings on er.RatingID equals r.Id
+                       join s in db.Skills on er.SkillID equals s.Id
+                       join st in db.SkillTypes on s.SkillTypeID equals st.Id
+                       select new
+                       {
+                           SkillTypeID = st.Id,
+                           SkillTypeName = st.SkillTypeName,
+                           SkillsID = s.Id,
+                           SkillsName = s.SkillsName,
+                           RatingsName = r.RatingsName,
+                           Comments = er.Comments
+                       };
 
             EmployeeViewModel employeeViewModel = new EmployeeViewModel();
 
@@ -83,7 +88,7 @@ namespace EmployeeReviewAPI.Controllers
             }
 
             var response = Request.CreateResponse<EmployeeRating>(HttpStatusCode.Created, employeeRating);
-            string uri = Url.Link("DefaultApi", new { id = employeeRating.EmployeeRatingsID });
+            string uri = Url.Link("DefaultApi", new { id = employeeRating.Id });
             response.Headers.Location = new Uri(uri);
             return response;
         }
@@ -91,10 +96,10 @@ namespace EmployeeReviewAPI.Controllers
         [HttpPut]
         public HttpResponseMessage UpdateEmployeeRating(EmployeeRating model)
         {
-            EmployeeRating employeeRating = db.EmployeeRatings.First(x => x.EmployeeRatingsID == model.EmployeeRatingsID);
+            EmployeeRating employeeRating = db.EmployeeRatings.First(x => x.Id == model.Id);
             if (employeeRating.EmployeeID == model.EmployeeID && !employeeRating.Comments.Equals(model.Comments))
             {
-                employeeRating.RatingsID = model.RatingsID;
+                employeeRating.RatingID = model.RatingID;
                 employeeRating.Comments = model.Comments;
                 db.SaveChanges();
             }
@@ -106,7 +111,7 @@ namespace EmployeeReviewAPI.Controllers
 
         private bool EmployeeRatingExists(int id)
         {
-            return db.EmployeeRatings.Count(e => e.EmployeeRatingsID == id) > 0;
+            return db.EmployeeRatings.Count(e => e.Id == id) > 0;
         }
 
         [HttpGet]
@@ -117,7 +122,7 @@ namespace EmployeeReviewAPI.Controllers
             var customSkills = list.Select(x => new
             {
                 Row_number = index++,
-                SkillsID = x.SkillsID,
+                SkillsID = x.Id,
                 SkillsName = x.SkillsName,
                 SkillTypeID = x.SkillTypeID
             }).OrderBy(x => x.SkillsID).ToList();
@@ -125,11 +130,11 @@ namespace EmployeeReviewAPI.Controllers
             EmployeeReviewModels employeeReview = new EmployeeReviewModels();
             employeeReview.EmployeeID = employeeID;
             employeeReview.typeID = typeID;
-            employeeReview.SkillTypeName = (db.SkillTypes.Single(x => x.SkillTypeID == typeID).SkillTypeName).ToString();
+            employeeReview.SkillTypeName = (db.SkillTypes.Single(x => x.Id == typeID).SkillTypeName).ToString();
             employeeReview.SkillID = Convert.ToInt32(customSkills.FirstOrDefault(x => x.SkillTypeID == typeID && x.Row_number == pageCounter).SkillsID);
             employeeReview.SkillName = customSkills.FirstOrDefault(x => x.SkillTypeID == typeID && x.Row_number == pageCounter).SkillsName.ToString();
             employeeReview.Ratings = db.Ratings.Where(x => x.SkillTypeID == typeID).ToList();
-            employeeReview.EmployeeRatings = db.EmployeeRatings.Where(x => x.EmployeeID == employeeID && x.SkillsID == employeeReview.SkillID).ToList();
+            employeeReview.EmployeeRatings = db.EmployeeRatings.Where(x => x.EmployeeID == employeeID && x.SkillID == employeeReview.SkillID).ToList();
 
 
             string jsonEmployeeViewModel = JsonConvert.SerializeObject(employeeReview, Formatting.Indented, new JsonSerializerSettings() { ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore });
@@ -138,6 +143,29 @@ namespace EmployeeReviewAPI.Controllers
             return new HttpResponseMessage { Content = new JsonContent(json) };
         }
 
+        [HttpGet]
+        public HttpResponseMessage GetEmployeeDesignationList()
+        {
+            DesignationModel designationModel = new DesignationModel();
+            designationModel.Designations = db.Designations.ToList();
 
+            string jsonModel = JsonConvert.SerializeObject(designationModel);
+
+            JToken json = JObject.Parse(jsonModel);
+            return new HttpResponseMessage { Content = new JsonContent(json) };
+        }
+
+
+        [HttpGet]
+        public HttpResponseMessage IsValidEmployee(string EmployeeName)
+        {
+            int employeeID = 0;
+            bool value = db.Employees.Any(x => x.EmployeeName == EmployeeName);
+            if (value)
+                employeeID = Convert.ToInt32(db.Employees.FirstOrDefault(y => y.EmployeeName == EmployeeName).Id);
+
+            JToken json = JObject.Parse("{ 'EmployeeID' : " + employeeID + " }");
+            return new HttpResponseMessage { Content = new JsonContent(json) };
+        }
     }
 }

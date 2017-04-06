@@ -8,21 +8,21 @@ namespace EmployeeReview.Core
         {
             EmployeeReviewContext db = new EmployeeReviewContext();
 
-            string[] designationArray = { "Junior Developer", "Developer", "Senior Developer", "Team Lead", "Senior Team Lead", "Project Manager" };
-            foreach (var item in designationArray)
-            {
-                Designation desgination = new Designation();
-                desgination.DesignationName = item;
-                db.Designations.Add(desgination);
-                db.SaveChanges();
-            }
-
             string[] skillTypeArray = { "Developer", "Technical" };
             foreach (var item in skillTypeArray)
             {
                 SkillType skillType = new SkillType();
                 skillType.SkillTypeName = item;
                 db.SkillTypes.Add(skillType);
+                db.SaveChanges();
+            }
+
+            string[] designationArray = { "Junior Developer", "Developer", "Senior Developer", "Team Lead", "Senior Team Lead", "Project Manager" };
+            foreach (var item in designationArray)
+            {
+                Designation desgination = new Designation();
+                desgination.DesignationName = item;
+                db.Designations.Add(desgination);
                 db.SaveChanges();
             }
 

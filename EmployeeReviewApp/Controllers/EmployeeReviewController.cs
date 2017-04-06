@@ -1,33 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
-using static EmployeeReviewApp.Models.EmployeeViewModel;
 using EmployeeReview.Core.Models;
 using EmployeeReviewApp.Models;
-using EmployeeReview.Core;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using Newtonsoft.Json;
-using System.Web.Script.Serialization;
-using AutoMapper;
+using Newtonsoft.Json.Linq;
 
 namespace EmployeeReviewApp.Controllers
 {
     public class EmployeeReviewController : Controller
     {
-        EmployeeReviewContext db = new EmployeeReviewContext();
-
         int pageCounter = 0;
 
         [HttpGet]
         public ActionResult Index()
         {
-            //To Insert Master Data
+            //To Insert Master Data 
             //Initialize initialize = new Initialize();
             //initialize.Start();
-            ViewBag.Designations = new SelectList(db.Designations.ToList(), "DesignationID", "DesignationName");
+
+            FillDesignationDropDown();
             return View();
         }
 
@@ -37,16 +32,25 @@ namespace EmployeeReviewApp.Controllers
             int employeeID = 0;
             if (!string.IsNullOrEmpty(model.EmployeeName))
             {
-                if (!db.Employees.Any(x => x.EmployeeName == model.EmployeeName))
+                HttpClient client = InitialiseHttpClient();
+                HttpResponseMessage response = client.GetAsync("EmployeeReview/IsValidEmployee?EmployeeName=" + model.EmployeeName).Result;
+                if (response.IsSuccessStatusCode)
                 {
-                    ViewBag.Designations = new SelectList(db.Designations.ToList(), "DesignationID", "DesignationName");
-                    ModelState.AddModelError("EmployeeName", "Employee Name Invalid");
-                }
-                else
-                {
-                    employeeID = Convert.ToInt32(db.Employees.FirstOrDefault(y => y.EmployeeName == model.EmployeeName).EmployeeID);
-                    System.Web.HttpContext.Current.Session["EmployeeID"] = employeeID;
-                    return RedirectToAction("Home");
+                    var JSONResponse = response.Content.ReadAsStringAsync();
+                    string jsonString = JSONResponse.Result.ToString();
+                    dynamic data = JObject.Parse(jsonString);
+                    employeeID = data.EmployeeID;
+
+                    if (employeeID == 0)
+                    {
+                        FillDesignationDropDown();
+                        ModelState.AddModelError("EmployeeName", "Employee Name Invalid");
+                    }
+                    else
+                    {
+                        System.Web.HttpContext.Current.Session["EmployeeID"] = employeeID;
+                        return RedirectToAction("Home");
+                    }
                 }
             }
             return View();
@@ -54,6 +58,8 @@ namespace EmployeeReviewApp.Controllers
 
         public ActionResult Home()
         {
+            EmployeeReviewContext db = new EmployeeReviewContext();
+
             System.Web.HttpContext.Current.Session["PageCounter"] = 1;
 
             SkillsTypeModels model = new SkillsTypeModels();
@@ -75,8 +81,8 @@ namespace EmployeeReviewApp.Controllers
                 return View(employeeReview);
             }
 
-            employeeReview.SelectedRating = Convert.ToInt32(employeeReview.EmployeeRatings.FirstOrDefault().RatingsID);
-            employeeReview.EmployeeRatingsID = Convert.ToInt32(employeeReview.EmployeeRatings.FirstOrDefault().EmployeeRatingsID);
+            employeeReview.SelectedRating = Convert.ToInt32(employeeReview.EmployeeRatings.FirstOrDefault().RatingID);
+            employeeReview.EmployeeRatingsID = Convert.ToInt32(employeeReview.EmployeeRatings.FirstOrDefault().Id);
             employeeReview.Comments = (employeeReview.EmployeeRatings.FirstOrDefault().Comments).ToString();
 
             return View(employeeReview);
@@ -85,6 +91,8 @@ namespace EmployeeReviewApp.Controllers
         [HttpPost]
         public ActionResult ReviewForm(EmployeeReviewModel model)
         {
+            EmployeeReviewContext db = new EmployeeReviewContext();
+
             if (!ModelState.IsValid)
             {
                 ModelState.AddModelError("", "The Comments field is required.");
@@ -97,7 +105,7 @@ namespace EmployeeReviewApp.Controllers
             var customSkills = list.Select(x => new
             {
                 Row_number = index++,
-                SkillsID = x.SkillsID,
+                SkillsID = x.Id,
                 SkillsName = x.SkillsName,
                 SkillTypeID = x.SkillTypeID
             }).OrderBy(x => x.SkillsID).ToList();
@@ -111,8 +119,8 @@ namespace EmployeeReviewApp.Controllers
                 {
                     EmployeeRating employeeRating = new EmployeeRating();
                     employeeRating.EmployeeID = model.EmployeeID;
-                    employeeRating.SkillsID = skillID;
-                    employeeRating.RatingsID = model.SelectedRating;
+                    employeeRating.SkillID = skillID;
+                    employeeRating.RatingID = model.SelectedRating;
                     employeeRating.Comments = model.Comments;
                     employeeRating.CreateDate = DateTime.Now;
 
@@ -126,10 +134,10 @@ namespace EmployeeReviewApp.Controllers
             {
                 if (model.EmployeeID != 0 && model.EmployeeRatingsID != 0)
                 {
-                    EmployeeRating employeeRating = db.EmployeeRatings.First(x => x.EmployeeRatingsID == model.EmployeeRatingsID);
+                    EmployeeRating employeeRating = db.EmployeeRatings.First(x => x.Id == model.EmployeeRatingsID);
                     if (employeeRating.EmployeeID == model.EmployeeID && !employeeRating.Comments.Equals(model.Comments))
                     {
-                        employeeRating.RatingsID = model.SelectedRating;
+                        employeeRating.RatingID = model.SelectedRating;
                         employeeRating.Comments = model.Comments;
                         db.SaveChanges();
                     }
@@ -190,7 +198,9 @@ namespace EmployeeReviewApp.Controllers
         public ActionResult Logout()
         {
             Session.Clear();
-            ViewBag.Designations = new SelectList(db.Designations.ToList(), "DesignationID", "DesignationName");
+
+            FillDesignationDropDown();
+
             return View("Index");
         }
 
@@ -204,6 +214,18 @@ namespace EmployeeReviewApp.Controllers
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             client.BaseAddress = new Uri(webAPIURI);
             return client;
+        }
+
+        private void FillDesignationDropDown()
+        {
+            HttpClient client = InitialiseHttpClient();
+            HttpResponseMessage response = client.GetAsync("EmployeeReview/GetEmployeeDesignationList").Result;
+            if (response.IsSuccessStatusCode)
+            {
+                var JSONResponse = response.Content.ReadAsStringAsync();
+                DesignationModel designationList = JsonConvert.DeserializeObject<DesignationModel>(JSONResponse.Result.ToString());
+                ViewBag.Designations = new SelectList(designationList.Designations, "Id", "DesignationName");
+            }
         }
     }
 }

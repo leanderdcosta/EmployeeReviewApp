@@ -15,7 +15,7 @@
         @foreach (var item in Model.Ratings)
         {
             <div class="radio" style="margin-left:15px;">
-                @Html.RadioButtonFor(m => m.SelectedRating, item.RatingsID)@item.RatingsName
+                @Html.RadioButtonFor(m => m.SelectedRating, item.Id)@item.RatingsName
             </div>
         }
         @Html.ValidationMessageFor(m => m.SelectedRating, "", new { @class = "text-danger" })

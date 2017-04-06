@@ -9,8 +9,7 @@ namespace EmployeeReview.Core.Models
 {
     public class Employee
     {
-        [Key]
-        public int EmployeeID { get; set; }
+        public int Id { get; set; }
         public string EmployeeName { get; set; }
         public int DesignationID { get; set; }
 
